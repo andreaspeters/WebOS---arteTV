@@ -1,0 +1,8 @@
+enyo.depends(
+    "app/views/7plus/VideoList.js",
+    "app/views/7plus/ShowVideo.js",
+    "app/views/highlights/VideoList.js",
+    "app/views/live/ShowVideo.js",
+    "app/views/main.js"
+    
+); 

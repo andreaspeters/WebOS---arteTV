@@ -1,0 +1,227 @@
+/**
+ * @author andreas
+ */
+
+enyo.kind({
+    name: "SevenPlusShowVideo",
+    kind: "ModalDialog",
+    
+    jsonVideoList: [],
+    videolink: "",
+    
+    components: [    	
+    	
+		// Get Description of the video
+		{kind: "WebService", name: "grabVideoDescription", handleAs: "json", onSuccess: "grabVideoDescriptionSuccess", onFailure: "grabVideoDescriptionFailed"},
+		
+		// Grab the short Information for one movie			   
+		{kind: "WebService", name: "grabVideoItem", handleAs: "json", onSuccess: "grabVideoItemSuccess", onFailure: "grabVideoItemFailed"},
+		
+		// Grab the detail Information for one movie
+		{kind: "WebService", name: "grabVideoDetails", handleAs: "json", onSuccess: "grabVideoDetailsSuccess", onFailure: "grabVideoDetailsFailed"},
+		
+   		{kind: "HFlexBox", flex:1, components: [
+   			// Show Videoplayer
+   			{kind: (window.PalmSystem ? enyo.WebView : enyo.Iframe), style:"height:430px;width:650px", name: "videoWebView", onLoadComplete: "videoWebViewHideSpinner", onLoadStarted: "videoWebViewShowSpinner"},
+
+			{kind: "Scroller", components: [
+   				{name: "curVideoTitle"},
+   				{name: "videoDescription"},
+   				{name: "videoBy"},
+       				{name: "videoFistPlayed"},
+   				{name: "videoLastPlayed"}
+   			]},
+
+   			{kind: "Scroller", flex: 1, style:"margin-left:7px; margin-top:6px;", components: [		
+   				{kind: "VirtualRepeater", name: "postRolls", flex:1, onSetupRow: "renderPostRolls", components: [	
+					{name: "videoItem", kind: "Item", layoutKind: "VFlexBox", onclick: "btnClickOpenVideo", layoutKind: "HFlexLayout", components: [
+						{kind: "VFlexBox"},
+						{name: "videoTitle"}	
+					]}
+				]}
+			]},
+
+    		{kind: "VFlexBox", components: [
+        		{kind: "Image",  src:"images/window-close.png", onclick: "btnBackButton"},
+        		{kind: "Spinner", name:"spinner"},
+        		{kind: "Spacer", flex:1}
+        	]}
+     	]}
+	],
+	
+	/*
+	 * The video is loaded. Hide the spinner
+	 */
+	videoWebViewHideSpinner: function() {
+		this.$.spinner.hide();
+	},
+	
+
+	/*
+	 * The video is loading. Show the spinner
+	 */
+	videoWebViewShowSpinner: function() {
+		this.$.spinner.show();
+	},
+
+	
+	/*
+	 * Show the video player and set the arround informations
+	 * 
+	 * videoItem = the whole information of this video
+	 * video	 = the feed information if this video
+	 */
+	showVideoItem: function(videoItem, video) {
+		// Show the spinner
+		this.$.spinner.show();
+		
+	        // Print out video title
+	        this.$.curVideoTitle.setContent(videoItem.video.name);
+
+	
+		// Load Description to the Video
+		this.$.grabVideoDescription.setUrl("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22"
+											+videoItem.video.url
+											+"%22%20and%0A%20%20%20%20%20%20xpath%3D'%2F%2Fdiv%5B%40class%3D%22recentTracksCont%22%5D%2Fdiv%2Fp'&format=json&diagnostics=true&callback=");
+		this.$.grabVideoDescription.call();
+		
+
+		link = video.videolink;		
+		link = link.replace("http://videos.arte.tv","");
+
+		// the video player have to loaded from a external site. local flash is not allowed to access a external video
+		this.$.videoWebView.setUrl("http://www.aventer.biz/api/artevideo.php?link="+link);
+
+
+		if (videoItem.video.postrolls.video) {
+	    	this.jsonVideoList = [];
+	    }		
+		// create the video postrolls list. 
+		for (i in videoItem.video.postrolls.video) {
+			// Save the video information into a json object. thats needed for the render event of the postrollslist			
+			var curVideo = videoItem.video.postrolls.video[i];
+			
+			this.jsonVideoList.push(curVideo);
+		}
+		
+		this.$.postRolls.render();
+	},
+		
+	
+	/*
+	 * Go back to the main view
+	 */
+	btnBackButton: function(inSender, inEvent) {
+		if (window.PalmSystem) {
+			this.$.videoWebView.disconnect();
+		} else {
+			this.$.videoWebView.refresh();
+		}
+
+		this.$.videoDescription.setContent();
+		this.close();		
+	},
+
+	/*
+	 * Render the videoList
+	 */
+	renderPostRolls: function(inSender, inIndex) {				
+		var item = this.jsonVideoList[inIndex];		
+		if (item) {
+			// Create the VideListItem
+			this.$.videoTitle.setContent(item.name);
+			this.$.videoItem.setStyle("background-image: url("+item.firstThumbnailUrl+");")
+			//this.$.videoDate.setContent(item.video.datevideo);
+						
+			return true;
+		} 	
+	},	
+
+	/*
+	 * Open the selected video
+	 */
+	btnClickOpenVideo: function(inSender, inEvent) {
+		// show the spinner
+		this.$.spinner.show();
+		
+		// html link of the video. this link we have to change to the play xml
+		videolink = this.jsonVideoList[inEvent.rowIndex].url;
+		videolink = videolink.replace("videos/","do_delegate/videos/");
+		videolink = videolink.replace(".html",",view,asPlayerXml.xml");
+		
+		this.$.grabVideoItem.setUrl("http://query.yahooapis.com/v1/public/yql?q="
+												+"select%20*%20from%20xml%20where%20url%3D%22"
+												+encodeURI(videolink)+"%22&format=json&callback=");
+		this.$.grabVideoItem.call();
+		
+	},
+	
+	/*
+	 *  If the loading of the short description was successfull, this function will load the long description. Only in that is the direct
+	 *  link to the video and the important preview picture 
+	 */
+	grabVideoItemSuccess: function(inSender, inResponse, inRequest) {
+		if (inResponse != null) {
+			// The response will be a xml file. These we will convert to a JSON object
+			var res= inResponse;
+			res = res.query.results;
+			// Get the link to the german video long description
+			try {			
+				if (res.videoref.videos.video[0].lang == enyo.g11n.currentLocale().getLanguage()) {
+					this.$.grabVideoDetails.setUrl("http://query.yahooapis.com/v1/public/yql?q="
+											+"select%20*%20from%20xml%20where%20url%3D"
+											+encodeURI(JSON.stringify(res.videoref.videos.video[0].ref))
+											+"&format=json&callback=");
+				} else {
+					this.$.grabVideoDetails.setUrl("http://query.yahooapis.com/v1/public/yql?q="
+											+"select%20*%20from%20xml%20where%20url%3D"
+											+encodeURI(JSON.stringify(res.videoref.videos.video[1].ref))
+											+"&format=json&callback=");
+				}				
+				this.$.grabVideoDetails.call();		
+			} catch(e) {}
+		}		
+	},
+	
+
+	/*
+	 * Get the desciption of the video
+	 */
+	grabVideoDescriptionSuccess: function(inSender, inResponse, inRequest) {
+		if (inResponse != null) {
+			try {
+				var description = inResponse.query.results.p[0].content;
+				var videoBy = inResponse.query.results.p[1].content;
+				if (!description) {
+					description = inResponse.query.results.p[0];
+				}
+
+//				description = description.replace(/\\n/g,"\r\n");			
+//				description = description.replace(/\\"/g,"\"");
+			
+			
+				this.$.videoDescription.setContent(description);
+				this.$.videoBy.setContent(videoBy);
+			} catch(e) {}			
+		}
+		this.$.spinner.hide(); 		
+	},
+	
+	/*
+	 * If the loading of the video details was successfull, then these function will set all the needed information and 
+	 * start the VirtualRepeater redering
+	 */
+	grabVideoDetailsSuccess: function(inSender, inResponse, inRequest) {
+		if (inResponse != null) {
+			// The response will be a xml file. These we will convert to a JSON object
+			var res = inResponse;
+			res = res.query.results;
+					
+			// Read the needing information an store it
+			try {
+				this.showVideoItem(res,{"videolink": videolink});
+			} catch(e) {}					
+		}	
+					
+	}		
+}); 

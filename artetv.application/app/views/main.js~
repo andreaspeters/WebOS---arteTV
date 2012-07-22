@@ -1,0 +1,83 @@
+/**
+ * @author andreas
+ */
+
+enyo.kind({
+    name: "ArteTV",
+    kind: enyo.VFlexBox,
+    
+    jsonVideoList: [],
+    jsonVideoDescription: [],
+
+    components: [
+        {kind: "ApplicationEvents", onLoad: "initializeHightlightsVideoList"},
+        
+
+        {kind: "PageHeader", layoutKind: "HFlexLayout", style:"height:60px", components: [
+            {kind: "Spacer"},     	
+       		{kind: "Image", style: "height: 30px;", src: "images/arte-logo.png"},
+       		{kind: "Spacer"},
+       		{kind: "Image", onclick: "btnInfo", src: "images/info.png"},
+        ]},
+
+		{kind: "Pane", name: "MainView", flex: 1, transitionKind: "enyo.transitions.LeftRightFlyin", components: [
+		    {kind: "SevenPlusVideoList", name: "SevenPlus"},
+   			{kind: "LiveShowVideo", name: "Live"},
+   		]},			
+								
+		{kind: "Toolbar", components: [
+			{kind: "RadioToolButtonGroup", components: [
+				{caption: "ARTE 7+", onclick: "btnShowSevenPlus"},
+				{caption: "Live", onclick: "btnShowLive"},
+				{caption: "Current", onclick: "btnShowCurrent"}
+			]}
+		]},
+		
+		{kind: "Popup", name: "infoWindow", onclick: "btnInfoClose", components: [
+			{kind: "PageHeader", layoutKind: "HFlexLayout", pack: "Center", style:"height:60px", components: [
+				{kind: "Image", style: "height: 30px;", src: "images/arte-logo.png"}
+			]},
+			{content: "This is a unofficial ArteTV app based at the public RSS feeds of ARTE. ARTE doesn't support this app and is also not the owner or developer."},
+			{content: "For failures, questions, more informations or feature requests, please contact us via our website."},
+			{content: "www.aventer.biz", name: "url"},	
+			{content: "avEnter - UG (haftungsbeschränkt)", name: "company"}
+		]}
+		
+	],
+	
+	/*
+	 * This function will be loaded after the app was starting. This function will load the current 7Plus Video List
+	 */
+	initializeHightlightsVideoList: function(inSender) {
+		this.$.MainView.selectViewByName("SevenPlus");		
+	},
+	
+	/*
+	 * Click on the toolbar Button "SevenPlus"
+	 */
+	btnShowSevenPlus: function() {
+		this.$.MainView.selectViewByName("SevenPlus");
+	},
+
+	/*
+	 * Click on the toolbar Button "Live"
+	 */
+	btnShowLive: function() {
+		this.$.MainView.selectViewByName("Live");
+	},
+	
+	/*
+	 * Open Info Popup
+	 */
+	btnInfo: function() {
+		this.$.infoWindow.openAtCenter();
+	},
+	
+	/*
+	 * Close info popup
+	 */
+	btnInfoClose: function() {
+		this.$.infoWindow.close();
+	}
+	
+}); 

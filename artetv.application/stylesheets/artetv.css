@@ -1,0 +1,163 @@
+/* TODO: put your application-specific CSS here */
+
+body {
+    background-color: #000000;
+}
+
+#arteTV_SevenPlus_videoList_client_client, #arteTV_Reportagen_videoList_client_client, #arteTV_Junior_videoList_client_client {
+    width: 512px;
+    height: 300px;
+    float: left;
+}
+
+#arteTV_SevenPlus_vFlexBox, #arteTV_Reportagen_vFlexBox, #arteTV_Junior_vFlexBox {
+    width: 512px;
+    height: 80px;
+    margin-top:220px;
+    background-color: #000000;
+    opacity:0.6;
+    position: absolute;	
+}
+
+#arteTV_SevenPlus_videoTitle, #arteTV_Reportagen_videoTitle, #arteTV_Junior_videoTitle {
+    font-size: 12px;
+    color: #ffffff;
+    font-weight: bold;
+    position: absolute;
+    margin-top:230px;
+    margin-left: 20px;
+    z-index:100;
+}
+
+#arteTV_SevenPlus_videoDate, #arteTV_Reportagen_videoDate, #arteTV_Junior_videoDate {
+    font-size: 12px;
+    color: #ff9900;
+    position: absolute;
+    margin-top:190px;
+    margin-left: 20px;
+    font-weight: bold;
+    z-index:100;
+}
+
+#arteTV_SevenPlus_videoItem, #arteTV_Reportagen_videoItem, #arteTV_Junior_videoItem {
+    display:inline-block;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+#arteTV_SevenPlus_videoDescription, #arteTV_Reportagen_videoDescription, #arteTV_Junior_videoDescription {
+    font-size: 12px;
+    color: #ffffff;
+    position: absolute;
+    margin-top: 250px;
+    margin-left: 20px;
+    width: 480px;
+    z-index: 100;
+}
+
+#arteTV_radioToolButton, #arteTV_radioToolButton2, #arteTV_radioToolButton3, #arteTV_radioToolButton4 {
+    font-size: 12px;
+    width: 95px;
+}
+
+#arteTV_radioToolButtonGroup {
+    width: 400px;
+}
+
+#showVideo_button, #scrim {
+    opacity:0.0;
+
+}
+
+#showVideo_postRolls_client_client {
+    height: 169px;
+    width: 300px;
+}
+
+#showVideo_videoItem {
+    display:inline-block;
+    padding: 0px;
+    width: 300px;
+    height: 169px;	
+}
+
+#showVideo_vFlexBox {
+    width: 300px;
+    height: 30px;
+    margin-top:139px;
+    background-color: #000000;
+    opacity:0.6;
+    position: absolute;	
+}
+
+#showVideo_hFlexBox {
+    float:left;
+}
+
+#showVideo_videoTitle {
+    font-size: 12px;
+    color: #ffffff;
+    font-weight: bold;
+    position: absolute;
+    margin-top:140px;
+    margin-left: 10px;
+    z-index:100;
+    width: 300px;
+}
+
+
+.showVideo, #showVideo, #showVideo_videoWebView, #showVideo_control, #showVideo_client, #showVideo_hFlexBox {
+    width:100%;
+    height:100%;
+    background-color:#000000;	
+    border: 0px;
+}
+
+#showVideo_image {
+    padding-top:15px;
+}
+
+
+#showVideo_iconButton {
+    background-color:#000000;
+}
+
+#showVideo_scroller {
+    width:640px;
+    background-color: #eeeeee;
+    font-size:13px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;  	
+    margin-left:-640px;
+    margin-top:430px;
+}
+
+#showVideo_videoDescription {
+    padding:5px;
+}
+
+#arteTV_control, #arteTV_control2 {
+    text-align: justify; 
+    text-justify: newspaper;
+    font-size: 12px;
+    width: 400px;
+    
+}
+
+#arteTV_url, #arteTV_company {
+    font-size: 14px;
+    font-weight: bold;
+    padding-top:10px;
+    text-align: center;
+}
+
+#showVideo_curVideoTitle {
+    font-weight:bold;
+    font-size:17px;
+    padding-top:2px;
+    border-bottom: 1px solid #000000;
+    border-left: 0px solid #000000;
+    border-right: 0px solid #000000;
+    border-top: 0px solid #000000;
+}

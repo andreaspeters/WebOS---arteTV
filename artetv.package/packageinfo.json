@@ -1,0 +1,11 @@
+{
+  "id": "com.aventer.artetv",
+  "package_format_version": 2,
+  "loc_name": "avEnter ArteTV",
+  "version": "0.0.3",
+  "icon": "icon_1_1.png",
+  "miniicon": "icon.png",
+  "vendor": "avEnter",
+  "vendorurl": "aventer.biz",
+  "app": "com.aventer.artetv"
+}

@@ -1,0 +1,10 @@
+{
+	"id": "com.aventer.artetv",
+	"version": "0.0.3",
+	"vendor": "avEnter",
+	"type": "web",
+	"main": "index.html",
+	"title": "ArteTV - unofficial",
+	"icon": "icon.png",
+    "uiRevision": "2"	
+}
